@@ -1,0 +1,44 @@
+Package: caretSDM
+Type: Package
+Title: Species Distribution Models using caret
+Version: 0.1.0
+Author: Paulo Corrêa
+Maintainer: Paulo Corrêa <correapvf@gmail.com>
+Description: This package add more tools and features to caret to create and evaluate models,
+    specially aiming for species destribution models (SDMs). This package contais functions
+    to evaluate create ROC curves, create response plots, calculate the importance of
+    of variables (also including a jackknife method), choose and set a thresholder in a model,
+    import spatial blocks for cross-validation from ENMeval or blockCV into caret control,
+    create and evaluate ensemble models (the method here is different from caretEnsemble),
+    create confidence maps based on bootstrap, and create MaxEnt models using caret 'train'
+    function (it uses the jar version of MaxEnt to create and predict models).
+License: MIT + file LICENSE
+Depends:
+    R (>= 3.2.0)
+Imports: 
+    data.table,
+    foreach,
+    ggplot2,
+    caret,
+    raster,
+    sp,
+    rgeos,
+    generics,
+    lattice,
+	GGally
+Suggests: 
+    doParallel,
+    pROC,
+    ModelMetrics,
+    e1071,
+    ggpubr,
+	dismo,
+    blockCV,
+    ENMeval,
+    testthat (>= 3.0.0),
+    randomForest,
+    gbm,
+    plyr
+Encoding: UTF-8
+RoxygenNote: 7.1.1
+Config/testthat/edition: 3
