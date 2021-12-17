@@ -4,7 +4,7 @@ test_that("evaluate model: classification", {
     expect_true(all(e$eval$error == 0))
     expect_true(nrow(e$resample) == 0)
     expect_s3_class(plot(e), "ggplot")
-    
+
     expect_silent(e <- evaluate(models, testdata))
     expect_equal(nrow(e$eval), 12)
     expect_equal(ncol(e$eval), 5)
@@ -12,7 +12,7 @@ test_that("evaluate model: classification", {
     expect_equal(nrow(e$resample), 20)
     expect_equal(ncol(e$resample), 6)
     expect_false(anyNA(e$resample))
-    
+
     expect_s3_class(plot(e), "ggplot")
     expect_s3_class(plot(e, plot_errorbar = FALSE), "ggplot")
     expect_s3_class(dotplot(e, data = "train"), "ggplot")

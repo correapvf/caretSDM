@@ -29,13 +29,15 @@
 
 \item{testdata}{A data.frame with test values to be evaluated. If \code{NULL}, training values will be used.}
 
-\item{testy}{A factor of response variable of \code{testdata}. If \code{NULL}, it will be guessed from \code{testdata} data.frame.}
+\item{testy}{A factor of response variable of \code{testdata}. If \code{NULL}, it will be guessed from
+\code{testdata} data.frame.}
 
 \item{testindex}{A list with rows index of testdata for each resample, preferably an output of
-\code{\link{create.test.index}} or \code{\link{create.test.index.blockCV}}. If \code{NULL}, indexes are create based on 
-the same methods provided by \code{trainControl} used in the model. Only used if \code{error_bar = TRUE}.}
+\code{\link{create.test.index}} or \code{\link{create.test.index.blockCV}}. If \code{NULL}, indexes
+are create based on the same methods provided by \code{trainControl} used in the model.
+Only used if \code{error_bar = TRUE}.}
 
-\item{summaryFunction}{A Summary function (one of \code{\link[caret]{defaultSummary}}) that calculate the metrics. 
+\item{summaryFunction}{A Summary function (one of \code{\link[caret]{defaultSummary}}) that calculate the metrics.
 If \code{NULL}, the summaryFunction provided in the model will be used.}
 
 \item{calc.train}{logical. Evaluate training data? If \code{FALSE}, only test data is evaluated.}
@@ -67,7 +69,7 @@ An S3 object of class 'evaluate.train', including:
 Evaluate a caret model using the metrics of \code{summaryFunction}.
 }
 \note{
-This function is somewhat similar to \code{\link[caret]{resamples}}, however this function 
+This function is somewhat similar to \code{\link[caret]{resamples}}, however this function
 supports evaluation using test data, a custom threshold (use \code{setThreshold}), or a different summaryFunction.
 }
 \examples{

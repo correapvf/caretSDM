@@ -14,12 +14,15 @@ confusionMatrix2(model, ...)
 
 \item{...}{Further arguments to \code{\link[caret]{confusionMatrix}}.}
 
-\item{testdata}{A data.frame with test values to be evaluated. If \code{NULL}, training values will be used.}
+\item{testdata}{A data.frame with test values to be evaluated.
+If \code{NULL}, training values will be used.}
 
-\item{testy}{A factor of response variable of \code{testdata}. If \code{NULL}, it will be guessed from \code{testdata} data.frame.}
+\item{testy}{A factor of response variable of \code{testdata}.
+If \code{NULL}, it will be guessed from \code{testdata} data.frame.}
 }
 \description{
-This is a wrapper function for \code{\link[caret]{confusionMatrix}}, but it accepts directly a caret model and a data.frame with test data.
+This is a wrapper function for \code{\link[caret]{confusionMatrix}},
+but it accepts directly a caret model and a data.frame with test data.
 }
 \note{
 Using \code{confusionMatrix2(model)} (without test data) will produce simple training metrics, unlike

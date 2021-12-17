@@ -13,7 +13,14 @@ confidence_map(model, ...)
 
 \method{confidence_map}{list}(model, rasterStack, nrep = 200, progress = TRUE, ...)
 
-\method{confidence_map}{ensemble.train}(model, rasterStack, nrep = 200, progress = TRUE, ...)
+\method{confidence_map}{ensemble.train}(
+  model,
+  rasterStack,
+  nrep = 200,
+  progress = TRUE,
+  return.all = FALSE,
+  ...
+)
 }
 \arguments{
 \item{model}{A model returned by \code{\link[caret]{train}} or \code{\link{createEnsemble}}.}
@@ -25,11 +32,16 @@ confidence_map(model, ...)
 \item{nrep}{Number of bootstrap replicates.}
 
 \item{progress}{logical. Show progress text? If parallel is activated, it automatically defaults to \code{FALSE}.}
+
+\item{return.all}{logical. If \code{TRUE}, return predictions and cvs for all models. Else, return
+only the CV for the ensemble model.}
 }
 \value{
-For 'train' or 'list' methods, a list with \code{$means} and \code{$sds} containing
-'RasterLayers' (for 'train') or 'RasterStacks' (for 'list', each layer representing one model).
- For 'ensemble.train' method, a single 'RasterLayer' is returned.
+For 'train' or 'list' methods, a 'RasterLayer' or a 'RasterStack' containing the coefficient of variation
+(CV) of the bootstrap output for each model. \cr\cr
+For 'ensemble.train' method, if \code{return.all} is \code{TRUE}, return a list with \code{$preds}
+and \code{$cvs} containing each a 'RasterStack' of the predictions and CVs of all models,
+including the ensemble. Else, return a single 'RasterLayer' with CV of the ensemble model.
 }
 \description{
 Create confidence maps using bootstrap replicates
@@ -39,7 +51,7 @@ For each interaction (defined by nrep), the trained data set for each model is r
 and each model retrained using this new data.\cr
 Predictions are made for each model for each interaction, separately.
 
-For 'train' objects, the mean and standard deviation of all replicates are retuned.
+For 'train' objects, the mean and standard deviation from all replicates are returned.
 
 For 'ensemble.train' objects, the coefficient of variation is calculated for each model, which in turn is assembled
 based on algorithmic used to create the ensemble:

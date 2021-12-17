@@ -9,11 +9,11 @@
 \usage{
 varImp2(model, ...)
 
-\method{varImp2}{train}(model, nperm = 1, errorFunction = ci_95, method = "pearson", ...)
+\method{varImp2}{train}(model, nperm = 1, errorFunction = ci_95, ...)
 
-\method{plot}{varImp2}(x, scale = TRUE, plot_errorbar = TRUE, ...)
+\method{plot}{varImp2}(x, scale = FALSE, plot_errorbar = TRUE, ...)
 
-\method{summary}{varImp2}(object, scale = TRUE, ...)
+\method{summary}{varImp2}(object, scale = FALSE, ...)
 }
 \arguments{
 \item{model}{A model returned by \code{\link[caret]{train}}.}
@@ -24,8 +24,6 @@ varImp2(model, ...)
 
 \item{errorFunction}{A function used to calculate errors. Function must accept \code{na.rm}.
 Only used if \code{nperm > 1}.}
-
-\item{method}{A method to calculate correlations, passed to \code{\link[stats]{cor}}.}
 
 \item{x, object}{An object from \code{varImp2}.}
 
@@ -46,7 +44,7 @@ A generic method for calculating variable importance for objects produced by \co
 }
 \details{
 The process of calculating variable importance is different from \code{caret::varImp(model, useModel = TRUE)}.
-Here we use the same process as described in \code{biomod2::variables_importance}, 
+Here we use the same process as described in \code{biomod2::variables_importance},
 but the function will directly accept a caret model.
 If available, multiple cores are used to compute correlations.
 }

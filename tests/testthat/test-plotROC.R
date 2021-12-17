@@ -1,6 +1,6 @@
 
 test_that("create a plotROC object", {
-    
+
     expect_silent(r.rf <- ROCcurve(model.rf, testdata, calc.train = FALSE, use.pROC = TRUE, errorFunction = NULL))
     expect_true(nrow(r.rf$dat.roc) > 0)
     expect_equal(ncol(r.rf$dat.roc), 5)
@@ -17,16 +17,15 @@ test_that("create a plotROC object", {
     expect_false(anyNA(r$thrs))
     expect_true(nrow(r$coords) > 0)
     expect_false(anyNA(r$coords))
-    
+
     expect_s3_class(plot(r, select.thr = 3:7), "ggplot")
     expect_s3_class(plot(r, type = "test", select.thr = 3:7, plot_ci = FALSE, add.text = FALSE), "ggplot")
-    
+
 })
 
 
 test_that("test roc2 output", {
-    expect_silent(x <- roc2(c('a','a','p','p','p','a'), c(.2,.3,.8,.9,.7,.1), seq(0,1,.1), c('p','a')))
-    expect_equal(x$se, c(1, 1, 1, 1, 1, 1, 1, 2/3, 1/3, 0, 0))
-    expect_equal(x$sp, c(0, 1/3, 2/3, 1, 1, 1, 1, 1, 1, 1, 1))
+    expect_silent(x <- roc2(c('a', 'a', 'p', 'p', 'p', 'a'), c(.2, .3, .8, .9, .7, .1), seq(0, 1, .1), c('p', 'a')))
+    expect_equal(x$se, c(1, 1, 1, 1, 1, 1, 1, 2 / 3, 1 / 3, 0, 0))
+    expect_equal(x$sp, c(0, 1 / 3, 2 / 3, 1, 1, 1, 1, 1, 1, 1, 1))
 })
-

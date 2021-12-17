@@ -18,7 +18,8 @@ create.test.index(
 
 \item{control}{A \code{trainControl} object or a \code{train} model from which a trainControl object is used.}
 
-\item{method, number, repeats, p}{Check \code{\link[caret]{trainControl}} for details. Only used if \code{control = NULL}.}
+\item{method, number, repeats, p}{Check \code{\link[caret]{trainControl}}for details.
+Only used if \code{control = NULL}.}
 }
 \value{
 A list of test data index to be used in each resampling.
@@ -28,7 +29,8 @@ This function provides resamples for test data to be used in \code{\link{evaluat
 Arguments are similar to \code{\link[caret]{trainControl}}.
 }
 \details{
-When \code{control} is provided, arguments "method", "number", "repeats" and "p" are obtained from the \code{trainControl} 
+When \code{control} is provided, arguments "method", "number",
+"repeats" and "p" are obtained from the \code{trainControl}
 object and used to create the index for test data. When \code{control = NULL}, the arguments provided
 in this function are used instead.
 }

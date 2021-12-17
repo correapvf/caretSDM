@@ -21,7 +21,7 @@ createEnsemble(
 
 \item{metric}{A metric to use to calculate weights. Only used if \code{ensemble_method = "weighted.mean"}.
 Must be one of the metrics provided by 'summaryFunction' used to train the models.
-If \code{NULL}, the first metric is used.}
+If \code{NULL}, the metric of the first model is used.}
 
 \item{calc.pred}{logical. Calculate predictions for training data? If \code{TRUE}, savePredictions is set
 to "final"; else, savePredictions is set to "FALSE".}

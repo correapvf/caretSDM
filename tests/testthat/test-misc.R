@@ -16,7 +16,7 @@ test_that("Test spatial functions", {
     set.seed(1)
     coords <- data.frame(lon = runif(nrow(traindata), -10, 10), lat = runif(nrow(traindata), -10, 10))
     expect_silent(ENM <- blockENM2fold(method = "block", traindata$Class, coords, presence.level = "Class1"))
-    
+
     coords <- sp::SpatialPoints(coords)
     set.seed(1)
     sptrain <- sp::SpatialPoints(data.frame(lon = runif(nrow(testdata), -10, 10), lat = runif(nrow(testdata), -10, 10)))
@@ -28,7 +28,7 @@ test_that("Test spatial functions", {
     expect_length(sbindex, 2)
     expect_length(sbindex$index, 5)
     expect_length(sbindex$indexOut, 5)
-    
+
     expect_warning(sbindex.test <- create.test.index.blockCV(sptrain, sb))
     expect_length(sbindex.test, 5)
 })

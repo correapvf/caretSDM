@@ -36,24 +36,27 @@ ROCcurve(model, ...)
 
 \item{testdata}{A data.frame with test values to be use in ROC curve. If \code{NULL}, training values will be used.}
 
-\item{testy}{A factor of response variable of \code{testdata}. If \code{NULL}, it will be guessed from \code{testdata} data.frame.}
+\item{testy}{A factor of response variable of \code{testdata}.
+If \code{NULL}, it will be guessed from \code{testdata} data.frame.}
 
 \item{testindex}{A list with rows index of testdata for each resample, preferably an output of
-\code{\link{create.test.index}} or \code{\link{create.test.index.blockCV}}. If \code{NULL}, indexes are create based on 
+\code{\link{create.test.index}} or \code{\link{create.test.index.blockCV}}.
+If \code{NULL}, indexes are create based on
 the same methods provided by \code{trainControl} used in the model. Ignored if \code{use.pROC = TRUE}.}
 
 \item{thrs}{A named vector with thresholds values between [0,1] to be plotted in the ROC curve
 or the output of \code{\link{thresholder2}}. If \code{model} is a list, this should be also a list of the same ordet
 with thresholds to be applied for each model.}
 
-\item{use.pROC}{logical. If \code{TRUE}, use \code{\link[pROC]{roc}} to compute the ROC curve and confidence intervals.
+\item{use.pROC}{logical. If \code{TRUE}, use \code{\link[pROC]{roc}}
+to compute the ROC curve and confidence intervals.
 If \code{FALSE}, use "model" and "testindex" resamples instead.}
 
 \item{calc.train}{logical. If \code{FALSE}, ROC curve for train data is not computed.}
 
-\item{errorFunction}{A function used to calculate confidence interval across resamples. 
+\item{errorFunction}{A function used to calculate confidence interval across resamples.
 Function is ignored if \code{use.pROC = TRUE}. Else, the  ROC curve is calculated from the
-mean between resamples. If \code{NULL}, confidence interval is not calculated and all train and 
+mean between resamples. If \code{NULL}, confidence interval is not calculated and all train and
 test data are used to calculate the curve. Default is 95\% confidence interval.}
 
 \item{x}{An objected returned by ROCcurve.}

@@ -22,7 +22,8 @@ trainControlSDM(
 
 \item{number, repeats, p}{Same as in \code{caret::trainControl}. Check its help file for more details.}
 
-\item{y}{Response variable. Only used if \code{presence.only} is \code{TRUE}. First level is assumed to be "presence" data.}
+\item{y}{Response variable. Only used if \code{presence.only} is \code{TRUE}.
+First level is assumed to be "presence" data.}
 
 \item{spatial.folds}{A vector or factor of fold designation. Must be same order as y, if supplield.}
 
@@ -39,9 +40,11 @@ A trainControl object to be used in the `train` function.
 Similar to the \code{caret::trainControl}, but with additional options
 }
 \details{
-This function has two more keys arguments compared to \code{caret::trainControl}: 'spatial.folds' and 'presence.only'.
+This function has two more keys arguments compared to \code{caret::trainControl}:
+'spatial.folds' and 'presence.only'.
 When spatial.folds is specified, the sampling (as defined by \code{method}) is applied in all folds, except one.
 This fold is used as held-out is the model and the process is repeated for each fold. \cr
-When presence.only is set to \code{TRUE}, than the sampling is done only in the presence data, and all absence records are used in each replicate.
+When presence.only is set to \code{TRUE}, than the sampling is done only in the presence data,
+and all absence records are used in each replicate.
 This should be set to \code{TRUE} when using presence/background data.
 }

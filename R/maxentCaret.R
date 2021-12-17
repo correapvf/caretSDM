@@ -2,15 +2,15 @@
 #' @rdname maxent
 #' @export
 maxentCaret <- list(type = "Classification",
-                    library = c("data.table","caretSDM"),
+                    library = c("data.table", "caretSDM"),
                     label = "MaxEnt",
                     loop = NULL
-                    ) 
+                    )
 
 # paramters
 maxentCaret$parameters <- data.frame(
     parameter = c("reg", "beta"),
-    class = c("character","numeric"),
+    class = c("character", "numeric"),
     label = c("Regularization Features", "Beta_Multiplier")
     )
 
@@ -20,7 +20,7 @@ maxentCaret$grid <- function(x, y, len = NULL, search = "grid") {
     reg.val <- switch(findInterval(nrow(x), c(10, 15, 80)) + 1,
                   "l", "lq", "lqh", "lqph")
 
-    if(search == "grid") {
+    if (search == "grid") {
         out <- expand.grid(reg = reg.val,
                            beta = c(0.5, 1, 2))
     } else {
@@ -38,7 +38,7 @@ maxentCaret$fit <- function(x, y, wts, param, lev, last, weights, classProbs, ..
 
 
 maxentCaret$predict <- function(modelFit, newdata, preProc = NULL, submodels = NULL) {
-    predict(modelFit, newdata) 
+    predict(modelFit, newdata)
 }
 
 
@@ -48,14 +48,14 @@ maxentCaret$prob <- function(modelFit, newdata, preProc = NULL, submodels = NULL
 
 
 # sort first with less regularization features, than with beta closest to 1
-maxentCaret$sort <- function(x) x[order(nchar(as.character(x$reg)), abs(x$beta-1)),]
+maxentCaret$sort <- function(x) x[order(nchar(as.character(x$reg)), abs(x$beta - 1)), ]
 
 maxentCaret$varImp <- function(x, ...) {
     if (hasArg(type)) {
-        if (!(type %in% c("contribution","permutation"))) stop("Type must be 'contribution' or 'permutation'")
+        if (!(type %in% c("contribution", "permutation"))) stop("Type must be 'contribution' or 'permutation'")
         out <- var_imp(x, type)
     } else {
-        out <- var_imp(x, type="contribution")
+        out <- var_imp(x, type = "contribution")
     }
     return(out)
 }

@@ -23,23 +23,24 @@ object can also be a RasterStack from the \code{raster} package, used to create 
 
 \item{newdata}{An optional set of data to predict on.}
 
-\item{type}{One of "raw", "prob", "both" or "prob_presence" (see details).}
+\item{type}{One of "raw", "prob", "both", "both1" or "prob1" (see details).}
 }
 \value{
 A vector or data.frame with predictions or probabilities, based on the argument \code{type}. Check details.
 If \code{model} is a list of models, than a list of predictions is returned.
 }
 \description{
-This function is a wrapper around \code{\link[caret]{predict.train}}, but it accepts a 
+This function is a wrapper around \code{\link[caret]{predict.train}}, but it accepts a
 threshold cutoff to calculate predictions from class probabilities.
 }
 \details{
 Most arguments work the same as \code{\link[caret]{predict.train}}.\cr\cr
-This function is only useful for two class Classification problems, when using 
+This function is only useful for two class Classification problems, when using
 \code{type = "raw"} and a different threshold from the default (which must set using \code{\link{setThreshold}}).
 Otherwise, the output is the same as \code{predict}.\cr\cr
-Additionally, you can set \code{type = "both"}, which will return a data.frame with both class probabilities and a prediction.
-or \code{type = "prob1"} to return a single vector with the first class probabilities (assumed to be presence).\cr\cr
+Additionally, you can set \code{type = "both"}, which will return a data.frame with all class probabilities and
+a prediction, \code{type = "prob1"} to return a single vector with the first class probabilities (assumed
+to be presence). \code{type = "both1"} will return class prediction and the first class probabilities.\cr\cr
 The method for RasterStack is a simpler version of \code{raster::predict}, but it may be faster sometimes.
 }
 \seealso{

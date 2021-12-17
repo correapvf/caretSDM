@@ -25,6 +25,7 @@ maxent(x, ...)
   clamp = TRUE,
   filesPath = paste0(tempdir(), "/maxent"),
   maxentPath = NULL,
+  flags = NULL,
   ...
 )
 
@@ -41,7 +42,7 @@ maxentCaret
 
 \item{y}{A response factor, same length as \code{nrow(x)}. \strong{First level is assumed to be "presence" data}.}
 
-\item{reg}{Regularization features to use. l - linear, q - quadratic, p - product, h - hinge}
+\item{reg}{Regularization features to use. l - linear, q - quadratic, p - product, t - threshold, h - hinge}
 
 \item{beta}{Beta multiplier}
 
@@ -49,7 +50,8 @@ maxentCaret
 
 \item{outputType}{One of 'Cloglog', 'Logistic', 'Cumulative', 'Raw'}
 
-\item{thrtype}{Which threshold type to use. One of 'Min_Presence','10\%_Presence','Sens=Spec','MaxSens+Spec','Balance','Entropy'}
+\item{thrtype}{Which threshold type to use. One of 'Min_Presence','10\%_Presence',
+'Sens=Spec','MaxSens+Spec','Balance','Entropy'}
 
 \item{clamp}{logical. Apply clamping in prediction}
 
@@ -57,13 +59,17 @@ maxentCaret
 
 \item{maxentPath}{Path of maxent.jar. If NULL, it will use maxent.jar from the dismo package}
 
+\item{flags}{Other flags to maxent. Should be in the format
+\code{c('addsamplestobackground=false', 'beta_hinge=1.5')}.}
+
 \item{form}{A formula of the form y ~ x1 + x2 + ...}
 
 \item{data}{Data frame from which variables specified in formula}
 
 \item{subset}{An index vector specifying the cases to be used in the training sample.}
 
-\item{na.action}{A function to specify the action to be taken if NAs are found. The default action is for the procedure to fail.}
+\item{na.action}{A function to specify the action to be taken if NAs are found.
+The default action is for the procedure to fail.}
 
 \item{categorical}{A character vector with column names to be treated as categorical variable.}
 }
@@ -80,17 +86,19 @@ An S3 object of class 'maxent' build using maxent.jar, including:
 Create a "MaxEnt" (Maximum Entropy) species distribution model.
 }
 \details{
-This function will use the java implementation of MaxEnt by Phillips, Dudik and Schapire, instead of the package maxnet.
+This function will use the java implementation of MaxEnt by Phillips,
+Dudik and Schapire, instead of the package maxnet.
 Check the MaxEnt documentation for more information.
 Only suitable for presence/absence or presence/background data.
-This is similar to \code{\link[dismo]{maxent}}, with less options (for instance, this will not accept rasters), but it is faster, specially the predict function.
+This is similar to \code{\link[dismo]{maxent}}, with less options (for instance, this will not accept rasters),
+but it is faster, specially the predict function.
 This function do not support maxent.jar replicates, as those should be handled by caret.
 }
 \note{
 When using a data.frame, variables defined as factors are automatically assigned as
 categorical variables. When using a matrix or a formula with caret, you must the argument
 \code{categorical} if any of the variables are factors/categorical.\cr
-Due to the way \code{caret::train} handles the data when using a formula, it is not possible to 
+Due to the way \code{caret::train} handles the data when using a formula, it is not possible to
 automatically get which variables are categorical.
 }
 \examples{
@@ -102,7 +110,7 @@ maxent(x, y, reg = "lq", maxentPath="~/maxent.jar", filesPath="/run/shm/maxent")
 # use 'categorical' if there are categorical  variables in traindata
 model.maxent = train(species ~ ., data=traindata,
                      method=maxentCaret, metric="ROC", trControl = control,
-                     tuneGrid = expand.grid(reg = c("lq","l"), beta = seq(0.5, 2, 0.2)), 
+                     tuneGrid = expand.grid(reg = c("lq","l"), beta = seq(0.5, 2, 0.2)),
                      categorical = c("factor1", "factor2"))
 }
 }

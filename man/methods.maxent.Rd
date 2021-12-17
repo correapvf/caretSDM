@@ -38,7 +38,8 @@
 
 \item{testdata}{A data.frame with test values to be use in ROC curve. If \code{NULL}, training values will be used.}
 
-\item{testy}{A factor of response variable of \code{testdata}. If \code{NULL}, it will be guessed from \code{testdata} data.frame.}
+\item{testy}{A factor of response variable of \code{testdata}. If \code{NULL}, it will be guessed from
+\code{testdata} data.frame.}
 
 \item{itype}{One of 'contribution', 'permutation' or 'both'.}
 }

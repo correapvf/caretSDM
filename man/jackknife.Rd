@@ -14,7 +14,7 @@ jackknife(model, ...)
   errorFunction = ci_95,
   param_override_only = NULL,
   param_override_without = NULL,
-  progress = TRUE,
+  progress = FALSE,
   ...
 )
 
@@ -25,7 +25,7 @@ jackknife(model, ...)
 
 \item{...}{ignored}
 
-\item{summaryFunction}{A Summary function (one of \code{\link[caret]{defaultSummary}}) that calculate the metrics. 
+\item{summaryFunction}{A Summary function (one of \code{\link[caret]{defaultSummary}}) that calculate the metrics.
 If \code{NULL}, the summaryFunction provided in the model will be used.}
 
 \item{errorFunction}{A function used to calculate errors across resamples. Default is 95\% confidence interval.}
@@ -34,7 +34,7 @@ If \code{NULL}, the summaryFunction provided in the model will be used.}
 best tune before they are passed to "train" to create a model with only and without one variable.
 Useful for models where tuning parameters are dependent of the number of variables (like 'mtry' for randomForest).}
 
-\item{progress}{logical. Show progress bar? If parallel is activated, it automatically defaults to \code{FALSE}.}
+\item{progress}{logical. Show progress bar?}
 
 \item{x}{An object from \code{jackknife}.}
 

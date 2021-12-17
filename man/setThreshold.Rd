@@ -9,18 +9,17 @@ setThreshold(model, thr)
 \arguments{
 \item{model}{A model returned by \code{\link[caret]{train}}.}
 
-\item{thr}{A value between 0 and 1 to be used as a threshold or a data.frame with one row and a column named 'thr'
-containing the threshold to use and other columns indicating parameters to retune the model. Can also be the
+\item{thr}{A value between 0 and 1 to be used as a threshold or the
 output of \code{summary.thresholder2()}.}
 }
 \value{
-The caret model provided with a new item \code{thr} and the 
+The caret model provided with a new item \code{thr} and the
 \code{pred} data.frame updated, if it exists. If "thr" is a 'data.frame', the finalModel
 is also updated using new parameters provided.
 }
 \description{
 This function will set a probability threshold cutoff to be used in predictions
-in a two class Classification problem. This threshold is automatically read by \code{\link{predict2}} and other 
+in a two class Classification problem. This threshold is automatically read by \code{\link{predict2}} and other
 functions in this package when calculating new predictions.
 }
 \note{

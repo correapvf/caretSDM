@@ -33,6 +33,7 @@ thresholder2(
 \method{summary}{thresholder2}(
   object,
   which.statistics = "J",
+  which.method = NULL,
   maximize = ifelse(which.statistics == "Dist", FALSE, TRUE),
   ...
 )
@@ -45,14 +46,17 @@ thresholder2(
 \item{thr.method}{A vector with threshold methods to use when calculating the optimal threshold.
 Can be a character or numeric vector. Check details for possible values. Default "all" is to use all methods.}
 
-\item{thr.interval}{A value to create probability thresholds cutoffs intervals to be evaluated. Should be between 0 and 0.1.}
+\item{thr.interval}{A value to create probability thresholds cutoffs intervals to be evaluated.
+Should be between 0 and 0.1.}
 
 \item{final}{logical. Should only the final tuning parameters chosen by train be used?}
 
-\item{add.statistics}{A character vector indicating additional statistics to calculate. See \code{\link[caret]{thresholder}} for a list of possible values.
+\item{add.statistics}{A character vector indicating additional statistics to calculate.
+See \code{\link[caret]{thresholder}} for a list of possible values.
 Note that 'Sensitivity', 'Specificity', 'Kappa', 'Dist' and 'Detection Prevalence' are always calculated.}
 
-\item{obs.prev}{Observed prevalence, in case your data is taken from a larger dataset. Defaults to observed prevalence from training data.}
+\item{obs.prev}{Observed prevalence, in case your data is taken from a larger dataset.
+Defaults to observed prevalence from training data.}
 
 \item{FPC, FNC}{False Positive and False Negative Costs. Used only to calculate "Cost" threshold.}
 
@@ -60,10 +64,10 @@ Note that 'Sensitivity', 'Specificity', 'Kappa', 'Dist' and 'Detection Prevalenc
 
 \item{x, object}{An object returned by thresholder2}
 
-\item{select.thr}{A vector with threshold methods to be displayed. Can be index of 
+\item{select.thr}{A vector with threshold methods to be displayed. Can be index of
 thr.method used in thresholder2.}
 
-\item{statistics}{A character vector indicating statistics to be displayed. Can be index of 
+\item{statistics}{A character vector indicating statistics to be displayed. Can be index of
 statistics used in thresholder2. Alternatively, can be "all" to display all available statistics
 or Sensitivity+Specificity" to display a Sensitivity and Specificity in a single plot.}
 
@@ -76,7 +80,10 @@ This is only used if you set \code{final = FALSE} in \code{thresholder2}.}
 
 \item{...}{ignored}
 
-\item{which.statistics}{A single character with a statistic to be used to select the best threshold.}
+\item{which.statistics}{A single character with a statistic to be used to select the best threshold.
+Only used if \code{which.method} is NULL.}
+
+\item{which.method}{A single character with a threshold method to obtain the threshold.}
 
 \item{maximize}{A logical: should the statistic be maximized or minimized?}
 }
@@ -87,7 +94,8 @@ An S3 object of class 'thresholder2', including:
   \item thresholder - The output of \code{\link[caret]{thresholder}}.
   }
 
-For the method \code{plot}, if \code{plot = TRUE}, a ggplot is returned. If \code{plot = FALSE}, a list of data.tables
+For the method \code{plot}, if \code{plot = TRUE}, a ggplot is returned.
+If \code{plot = FALSE}, a list of data.tables
 in the long format (used by ggplot) is returned.
 }
 \description{

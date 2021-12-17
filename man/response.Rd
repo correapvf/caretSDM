@@ -13,7 +13,7 @@ response(model, ...)
   fixedvarFunction = mean,
   errorFunction = ci_95,
   n = 100,
-  progress = TRUE,
+  progress = FALSE,
   ...
 )
 
@@ -31,7 +31,7 @@ If \code{NULL}, responses are calculated from the final model only.}
 
 \item{n}{Number of responses to get for each variable, as in seq(min(variable), max(variable), length.out=n).}
 
-\item{progress}{logical. Show progress bar? If parallel is activated, it automatically defaults to \code{FALSE}.}
+\item{progress}{logical. Show progress bar?}
 
 \item{x}{An object returned by \code{response}.}
 
@@ -46,7 +46,7 @@ A threshold must be set using \code{setThreshold} and its only plotted if there 
 \value{
 An S3 object of class 'response.train', including:
 \itemize{
-  \item{num and fact}{Data.tables with responses for each variable of type numeric and factors. 
+  \item{num and fact}{Data.tables with responses for each variable of type numeric and factors.
   If \code{errorFunction != NULL}, responses are means from resamples and errors are also provided.}
   \item{num_resample and fact_resample}{Data.tables with responses for each resample,
   only provided if \code{errorFunction != NULL}.}
