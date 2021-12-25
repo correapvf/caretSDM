@@ -27,11 +27,11 @@ predict.maxent <- function(object, newdata = NULL, thrtype = NULL, clamp = NULL,
         thereisfile <- TRUE
         while (thereisfile) {
             f <- paste(round(stats::runif(10) * 9), collapse = "")
-            predfile <- paste0(object$path, '/predIn', f)
+            predfile <- paste0(object$filesPath, '/predIn', f)
             thereisfile <- file.exists(predfile)
         }
 
-        outfile <- paste0(object$path, '/predOut', f, '.asc')
+        outfile <- paste0(object$filesPath, '/predOut', f, '.asc')
 
         check_matrix <- is.matrix(newdata)
         newdata <- as.data.frame(newdata)[, object$xNames]

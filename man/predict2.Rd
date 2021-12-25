@@ -9,11 +9,11 @@
 \usage{
 predict2(object, ...)
 
-\method{predict2}{train}(object, newdata = NULL, type = "raw", ...)
+\method{predict2}{train}(object, newdata = NULL, type = "raw", doclamp = FALSE, ...)
 
 \method{predict2}{list}(object, ...)
 
-\method{predict2}{RasterStack}(object, model, ...)
+\method{predict2}{RasterStack}(object, model, doclamp = FALSE, ...)
 }
 \arguments{
 \item{object, model}{A model returned by \code{\link[caret]{train}} or a list of models.
@@ -24,6 +24,8 @@ object can also be a RasterStack from the \code{raster} package, used to create 
 \item{newdata}{An optional set of data to predict on.}
 
 \item{type}{One of "raw", "prob", "both", "both1" or "prob1" (see details).}
+
+\item{doclamp}{logical. Clamp \code{newdata} or \code{RasterStack} based on training data?}
 }
 \value{
 A vector or data.frame with predictions or probabilities, based on the argument \code{type}. Check details.
@@ -44,5 +46,5 @@ to be presence). \code{type = "both1"} will return class prediction and the firs
 The method for RasterStack is a simpler version of \code{raster::predict}, but it may be faster sometimes.
 }
 \seealso{
-\code{\link{setThreshold}}
+\code{\link{setThreshold}} c\code{\link{lamp_data}}
 }

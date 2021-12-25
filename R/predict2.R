@@ -73,13 +73,16 @@ predict2 <- function(object, ...) UseMethod("predict2")
 #' object can also be a RasterStack from the \code{raster} package, used to create predictions.
 #' @param newdata An optional set of data to predict on.
 #' @param type One of "raw", "prob", "both", "both1" or "prob1" (see details).
+#' @param doclamp logical. Clamp \code{newdata} or \code{RasterStack} based on training data?
 #' @param ... Further arguments passed to \code{predict} or method 'train'.
 #' @return A vector or data.frame with predictions or probabilities, based on the argument \code{type}. Check details.
 #' If \code{model} is a list of models, than a list of predictions is returned.
-#' @seealso \code{\link{setThreshold}}
+#' @seealso \code{\link{setThreshold}} c\code{\link{lamp_data}}
 #' @rdname predict2
 #' @export
-predict2.train <- function(object, newdata = NULL, type = "raw", ...) {
+predict2.train <- function(object, newdata = NULL, type = "raw", doclamp = FALSE, ...) {
+
+    if (doclamp && !is.null(newdata)) newdata <- clamp_data(object, newdata)
 
     switch(type,
         raw = {
@@ -141,13 +144,22 @@ predict2.list <- function(object, ...) {
 
 #' @rdname predict2
 #' @export
-predict2.RasterStack <- function(object, model, ...) {
+predict2.RasterStack <- function(object, model, doclamp = FALSE, ...) {
     # convert raster to data.frame
     r <- raster2data(object)
     r_index <- as.numeric(row.names(r))
 
     is.train <- inherits(model, "train")
-    allowParallel <- if (is.train) model$control$allowParallel else model[[1]]$control$allowParallel
+    if (is.train) {
+        allowParallel <- model$control$allowParallel
+        if (doclamp) r <- clamp_data(model, r)
+    } else {
+        allowParallel <- model[[1]]$control$allowParallel
+        if (doclamp) {
+            message("Only training data of the first model will be used to clamp rasterStack")
+            r <- clamp_data(model[[1]], r)
+        }
+    }
 
     if (allowParallel && getDoParWorkers() > 1) {
 
@@ -194,4 +206,44 @@ back_to_raster2 <- function(cv, rasterStack, r_index) {
         out[[cnames[i]]] <- back_to_raster(cv[, i], rasterStack, r_index)
     }
     return(raster::stack(out))
+}
+
+
+
+#' Clamp values in a dataset
+#'
+#' This function clamp values in the \code{dataset} object based on
+#' minimum and maximum values on the train data.
+#' @param object A data.frame with the training data or a model returned
+#' by \code{\link[caret]{train}}, from which the training data is obtained.
+#' @param dataset Either a data.frame or a rasterStack object with values to be clamped.
+#' Columns or layers names should match the columns of the training data.
+#' @return The \code{dataset} with values clamped.
+#' @export
+clamp_data <- function(object, dataset) {
+
+    if (inherits(object, "train"))
+        traindata <- object$trainingData
+    else {
+        traindata <- object
+    }
+
+
+    if (!all(names(dataset) %in% colnames(traindata)))
+        stop("'dataset' layer/columns names should be equal to 'traindata' columns names.")
+
+    traindata <- as.data.frame(traindata)
+    traindata <- traindata[, names(dataset)]
+
+    for (i in seq_len(ncol(traindata))) {
+        rang <- range(traindata[, i])
+
+        tmp <- dataset[[i]] < rang[1]
+        dataset[[i]][tmp] <- rang[1]
+
+        tmp <- dataset[[i]] > rang[2]
+        dataset[[i]][tmp] <- rang[2]
+    }
+
+    return(dataset)
 }

@@ -23,7 +23,7 @@ maxent <- function(x, ...) UseMethod("maxent")
 #' @param outputType One of 'Cloglog', 'Logistic', 'Cumulative', 'Raw'
 #' @param thrtype Which threshold type to use. One of 'Min_Presence','10\%_Presence',
 #' 'Sens=Spec','MaxSens+Spec','Balance','Entropy'
-#' @param clamp logical. Apply clamping in prediction
+#' @param clamp logical. Apply clamping in prediction?
 #' @param filesPath Path used to store MaxEnt output files
 #' @param maxentPath Path of maxent.jar. If NULL, it will use maxent.jar from the dismo package
 #' @param flags Other flags to maxent. Should be in the format
@@ -82,8 +82,9 @@ maxent.default <- function(x, y, reg = "lqph", beta = 1, niter = 500, outputType
     model$call <- match.call()
     model$maxentPath <- maxentPath
     model$path <- outdir
+    model$filesPath <- filesPath
     model$type <- "Classification"
-    model$params < list()
+    model$params <- list()
     model$params$clamp <- clamp
     model$params$outputType <- outputType
     model$params$reg.features <- reg
@@ -208,6 +209,7 @@ maxent.formula <- function(form, data, ..., subset, na.action)  {
     m <- eval.parent(m)
     if (nrow(m) < 1) stop("Every row has at least one missing value")
 
+    data <- as.data.frame(data)
     Terms <- attr(m, "terms")
     x <- data[, attr(Terms, "term.labels")]
     y <- stats::model.response(m)

@@ -53,7 +53,7 @@ maxentCaret
 \item{thrtype}{Which threshold type to use. One of 'Min_Presence','10\%_Presence',
 'Sens=Spec','MaxSens+Spec','Balance','Entropy'}
 
-\item{clamp}{logical. Apply clamping in prediction}
+\item{clamp}{logical. Apply clamping in prediction?}
 
 \item{filesPath}{Path used to store MaxEnt output files}
 
