@@ -56,16 +56,27 @@ response.list <- function(model, ...) {
 #' @param x An object returned by \code{response}.
 #' @param plot_errorbar logical. Should plot errors? Only valid if \code{resample = TRUE}.
 #' @param plot_rugs logical. Should plot rugs representing quantiles?
+#' @param free_y logical. Free or fixed y axis in plots?
 #' @param plot_thr logical. Should plot a line representing the probability threshold of the model?
 #' A threshold must be set using \code{setThreshold} and its only plotted if there is only one model
 #' (to avoid to much noise in the plot).
 #' @param ... ignored
 #' @rdname response
 #' @export
-plot.response.train <- function(x, plot_errorbar = TRUE, plot_rugs = TRUE, plot_thr = TRUE, ...) {
+plot.response.train <- function(x, plot_errorbar = TRUE, plot_rugs = TRUE, free_y = TRUE, plot_thr = TRUE, ...) {
     fig <- list()
     plot.error <- diff(range(x$num$error)) > 0 && plot_errorbar
 
+    if (!free_y) {
+        if (plot_errorbar) {
+            lims <- c(
+                min(c(x$fact$response - x$fact$error, x$num$response - x$num$error)),
+                max(c(x$fact$response + x$fact$error, x$num$response + x$num$error))
+            )
+        } else {
+            lims <- range(c(x$fact$response, x$num$response))
+        }
+    }
 
     for (coef in x$coefs) {
         if (coef %in% names(x$xlevels)) {
@@ -73,8 +84,13 @@ plot.response.train <- function(x, plot_errorbar = TRUE, plot_rugs = TRUE, plot_
             tmp <- x$fact[variable == coef]
             figtmp <- ggplot(tmp, aes(x = factors, y = response, fill = method)) +
                 geom_bar(position = position_dodge(), stat = "identity") +
-                scale_y_continuous(limits = c(0, 1), expand = expansion(mult = c(0, 0.05))) +
                 scale_fill_brewer(palette = "Set1")
+
+                if (free_y) {
+                    figtmp <- figtmp + scale_y_continuous(expand = expansion(mult = c(0, 0.05)))
+                } else {
+                    figtmp <- figtmp + scale_y_continuous(limits = lims, expand = expansion(mult = c(0, 0.05)))
+                }
 
             if (plot.error) {
                 figtmp <- figtmp + geom_errorbar(aes(ymin = response - error, ymax = response + error),
@@ -92,6 +108,10 @@ plot.response.train <- function(x, plot_errorbar = TRUE, plot_rugs = TRUE, plot_
                 figtmp <- figtmp + geom_ribbon(aes(ymin = response - error, ymax = response + error, fill = method),
                                                alpha = 0.2, color = NA) +
                     scale_fill_brewer(palette = "Set1")
+            }
+
+            if (!free_y) {
+                figtmp <- figtmp + scale_y_continuous(limits = lims)
             }
 
             if (plot_rugs) {
@@ -319,11 +339,11 @@ response_main <- function(model, errorFunction = ci_95, progress = FALSE, fixedD
         `%op%` <- if (do.par) `%dopar%` else  `%do%`
         opts <- NULL
         doProgress <- progress && !do.par
-        
+
         if (progress) {
             cat(model$modelInfo$label, "\n")
             pb <- txtProgressBar(max = length(model$control$index), style = 3)
-            
+
             if (do.par) {
                 opts <- list(progress = function(n) setTxtProgressBar(pb, n))
             } else {

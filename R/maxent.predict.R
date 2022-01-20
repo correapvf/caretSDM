@@ -144,11 +144,8 @@ plot.maxent <- function(x, testdata = NULL, testy = NULL, ...) {
 
 
 
-#' @importFrom generics var_imp
 #' @export
-generics::var_imp
-
-
+var_imp <- function(x, ...) UseMethod("var_imp")
 
 #' @param itype One of 'contribution', 'permutation' or 'both'.
 #' @rdname methods.maxent

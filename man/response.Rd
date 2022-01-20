@@ -17,7 +17,14 @@ response(model, ...)
   ...
 )
 
-\method{plot}{response.train}(x, plot_errorbar = TRUE, plot_rugs = TRUE, plot_thr = TRUE, ...)
+\method{plot}{response.train}(
+  x,
+  plot_errorbar = TRUE,
+  plot_rugs = TRUE,
+  free_y = TRUE,
+  plot_thr = TRUE,
+  ...
+)
 }
 \arguments{
 \item{model}{A model returned by \code{\link[caret]{train}}.}
@@ -38,6 +45,8 @@ If \code{NULL}, responses are calculated from the final model only.}
 \item{plot_errorbar}{logical. Should plot errors? Only valid if \code{resample = TRUE}.}
 
 \item{plot_rugs}{logical. Should plot rugs representing quantiles?}
+
+\item{free_y}{logical. Free or fixed y axis in plots?}
 
 \item{plot_thr}{logical. Should plot a line representing the probability threshold of the model?
 A threshold must be set using \code{setThreshold} and its only plotted if there is only one model

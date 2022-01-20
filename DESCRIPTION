@@ -23,11 +23,11 @@ Imports:
     raster,
     sp,
     rgeos,
-    generics,
     lattice,
 	GGally
 Suggests: 
     doParallel,
+    doSNOW,
     pROC,
     ModelMetrics,
     e1071,

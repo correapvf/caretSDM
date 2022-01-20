@@ -1,8 +1,7 @@
 
-#' @importFrom generics evaluate
+#' @rdname evaluate
 #' @export
-generics::evaluate
-
+evaluate <- function(x, ...) UseMethod("evaluate")
 
 #' Evaluate a caret model
 #'
@@ -42,9 +41,9 @@ generics::evaluate
 #' models <- list(model1, model2, model3)
 #' e <- evaluate(models, summaryFunction = twoClassSummary)
 #' plot(e)
-#' dotplot(e, data.type = "test", metric = "ROC")
-#' pairs(e)
-#' pairs(e, fixed_axis = FALSE)
+#' dot_plot(e, data.type = "test", metric = "ROC")
+#' pairs_plot(e)
+#' pairs_plot(e, fixed_axis = FALSE)
 #' }
 #' @rdname evaluate
 #' @export
@@ -179,9 +178,8 @@ print.evaluate.train <- function(x, ...) {
 
 
 
-#' @importFrom lattice dotplot
 #' @export
-lattice::dotplot
+dot_plot <- function(x, ...) UseMethod("dot_plot")
 
 #' @param data Which data type to plot? Should be either 'train' or 'test'.
 #' When \code{NULL}, it defaults to test data, if present.
@@ -189,7 +187,7 @@ lattice::dotplot
 #' only the first metric is plotted. If 'all', all metrics are plotted.
 #' @rdname evaluate
 #' @export
-dotplot.evaluate.train <- function(x, data = NULL, metric = "all", ...) {
+dot_plot.evaluate.train <- function(x, data = NULL, metric = "all", ...) {
     metrics <- metric; data.type <- data; rm(metric, data)
     if (is.null(data.type)) data.type <- levels(x$resample$data)[1]
     if (is.null(metrics)) metrics <- x$eval$metric[1]
@@ -210,14 +208,14 @@ dotplot.evaluate.train <- function(x, data = NULL, metric = "all", ...) {
         return(invisible(fig))
 }
 
-#' @importFrom graphics pairs
+
 #' @export
-graphics::pairs
+pairs_plot <- function(x, ...) UseMethod("pairs_plot")
 
 #' @param fixed_axis logical. Should axis in all plots be fixed to the same limits?
 #' @rdname evaluate
 #' @export
-pairs.evaluate.train <- function(x, data = NULL, metric = NULL, fixed_axis = TRUE, ...) {
+pairs_plot.evaluate.train <- function(x, data = NULL, metric = NULL, fixed_axis = TRUE, ...) {
     metrics <- metric; data.type <- data; rm(metric, data)
     if (is.null(metrics)) metrics <- as.character(x$eval$metric[1])
     if (metrics == "all") {
