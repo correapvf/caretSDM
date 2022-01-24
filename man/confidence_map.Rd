@@ -9,14 +9,29 @@
 \usage{
 confidence_map(model, ...)
 
-\method{confidence_map}{train}(model, rasterStack, nrep = 200, progress = TRUE, ...)
+\method{confidence_map}{train}(
+  model,
+  rasterStack,
+  nrep = 10,
+  doclamp = FALSE,
+  progress = TRUE,
+  ...
+)
 
-\method{confidence_map}{list}(model, rasterStack, nrep = 200, progress = TRUE, ...)
+\method{confidence_map}{list}(
+  model,
+  rasterStack,
+  nrep = 10,
+  doclamp = FALSE,
+  progress = TRUE,
+  ...
+)
 
 \method{confidence_map}{ensemble.train}(
   model,
   rasterStack,
-  nrep = 200,
+  nrep = 10,
+  doclamp = FALSE,
   progress = TRUE,
   return.all = FALSE,
   ...
@@ -30,6 +45,8 @@ confidence_map(model, ...)
 \item{rasterStack}{A RasterStack from the \code{raster} package, used to create predictions.}
 
 \item{nrep}{Number of bootstrap replicates.}
+
+\item{doclamp}{logical. Clamp \code{RasterStack} based on training data before predictions?}
 
 \item{progress}{logical. Show progress text? If parallel is activated, it automatically defaults to \code{FALSE}.}
 
@@ -65,4 +82,8 @@ Where \code{cvi =} mean coefficient of variation for model \code{i},\cr
 and \code{p =} predictions of the ensemble using all training data.\cr
 For \code{weighted_mean}, \code{wi = metric/sum(all metrics)};
 and for \code{mean}, \code{wi = 1/(number of models)}.
+}
+\note{
+When using \code{progress = TRUE} in parallel, you must make clusters using the \code{doSNOW} package.
+Using package \code{doParallel} will return a warning, and the progress bar will not be updated.
 }

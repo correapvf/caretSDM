@@ -30,6 +30,7 @@ confidence_map <- function(model, ...) UseMethod("confidence_map")
 #' @param model A model returned by \code{\link[caret]{train}} or \code{\link{createEnsemble}}.
 #' @param rasterStack A RasterStack from the \code{raster} package, used to create predictions.
 #' @param nrep Number of bootstrap replicates.
+#' @param doclamp logical. Clamp \code{RasterStack} based on training data before predictions?
 #' @param progress logical. Show progress text? If parallel is activated, it automatically defaults to \code{FALSE}.
 #' @param ... ignored
 #' @return For 'train' or 'list' methods, a 'RasterLayer' or a 'RasterStack' containing the coefficient of variation
@@ -37,9 +38,11 @@ confidence_map <- function(model, ...) UseMethod("confidence_map")
 #' For 'ensemble.train' method, if \code{return.all} is \code{TRUE}, return a list with \code{$preds}
 #' and \code{$cvs} containing each a 'RasterStack' of the predictions and CVs of all models,
 #' including the ensemble. Else, return a single 'RasterLayer' with CV of the ensemble model.
+#' @note When using \code{progress = TRUE} in parallel, you must make clusters using the \code{doSNOW} package.
+#' Using package \code{doParallel} will return a warning, and the progress bar will not be updated.
 #' @rdname confidence_map
 #' @export
-confidence_map.train <- function(model, rasterStack, nrep = 200, progress = TRUE, ...) {
+confidence_map.train <- function(model, rasterStack, nrep = 10, doclamp = FALSE, progress = TRUE, ...) {
     out <- confidence_map.list(list(model), rasterStack, nrep, progress)
     return(raster::raster(out))
 }
@@ -48,7 +51,7 @@ confidence_map.train <- function(model, rasterStack, nrep = 200, progress = TRUE
 
 #' @rdname confidence_map
 #' @export
-confidence_map.list <- function(model, rasterStack, nrep = 200, progress = TRUE, ...) {
+confidence_map.list <- function(model, rasterStack, nrep = 10, doclamp = FALSE, progress = TRUE, ...) {
 
     check_list(model)
     check_list_ensemble(model)
@@ -61,7 +64,7 @@ confidence_map.list <- function(model, rasterStack, nrep = 200, progress = TRUE,
     r <- raster2data(rasterStack)
     r_index <- as.numeric(row.names(r))
 
-    results <- confidence_helper(model, r, nrep, model.type, progress)
+    results <- confidence_helper(model, r, nrep, model.type, doclamp, progress)
     names.models <- sapply(model, function(x) x$modelInfo$label)
 
     # calculate mean
@@ -84,7 +87,8 @@ confidence_map.list <- function(model, rasterStack, nrep = 200, progress = TRUE,
 #' only the CV for the ensemble model.
 #' @rdname confidence_map
 #' @export
-confidence_map.ensemble.train <- function(model, rasterStack, nrep = 200, progress = TRUE, return.all = FALSE, ...) {
+confidence_map.ensemble.train <- function(model, rasterStack, nrep = 10, doclamp = FALSE,
+                                          progress = TRUE, return.all = FALSE, ...) {
 
     # convert raster to data.frame
     r <- raster2data(rasterStack)
@@ -93,11 +97,11 @@ confidence_map.ensemble.train <- function(model, rasterStack, nrep = 200, progre
     model.type <- if (model$modelType == "Classification") "prob1" else "raw"
 
     # calculate cv for each model
-    results <- confidence_helper(model$model.list, r, nrep, model.type, progress)
+    results <- confidence_helper(model$model.list, r, nrep, model.type, doclamp, progress)
     cvs <- lapply(results, function(x) x$sd / x$mean)
 
     # calculate predictions for each model
-    preds <- predict2(model$model.list, r, type = model.type)
+    preds <- predict2(model$model.list, r, type = model.type, doclamp = doclamp)
 
     # ensemble model of predictions
     pred <- apply(data.frame(preds), 1, model$algo, w = model$w)
@@ -143,18 +147,18 @@ confidence_map.ensemble.train <- function(model, rasterStack, nrep = 200, progre
 ###############
 # Helper functions
 
-confidence_helper <- function(model.list, newdata, number, model.type, progress) {
+confidence_helper <- function(model.list, newdata, number, model.type, doclamp, progress) {
 
     # prepare progress bar
     do.par <- model.list[[1]]$control$allowParallel && getDoParWorkers() > 1
     `%op%` <- if (do.par) `%dopar%` else  `%do%`
     opts <- NULL
     doProgress <- progress && !do.par
-    
+
     if (progress) {
         cat("Create confidence map\n")
         pb <- txtProgressBar(max = length(model.list) * number, style = 3)
-        
+
         if (do.par) {
             opts <- list(progress = function(n) setTxtProgressBar(pb, n))
         } else {
@@ -180,7 +184,7 @@ confidence_helper <- function(model.list, newdata, number, model.type, progress)
         foreach(j = seq_len(number), .combine = wa$combine, .init = NULL,
                 .inorder = FALSE, .multicombine = TRUE,
                 .packages = "caret", .options.snow = opts) %op% {
-            
+
             model <- model.list[[i]]
             index <- index.list[[i]][[j]]
             args <- args.list[[i]]
@@ -193,7 +197,7 @@ confidence_helper <- function(model.list, newdata, number, model.type, progress)
             tmp.model <- invisible(do.call("train", args))
 
             # create predictions
-            pred <- predict2(tmp.model, newdata, type = model.type)
+            pred <- predict2(tmp.model, newdata, type = model.type, doclamp = doclamp)
 
             if (doProgress) {
                 setTxtProgressBar(pb, counter)
@@ -213,7 +217,7 @@ WACombine <- R6::R6Class("WelfordAlgorithm_combine_foreach",
     private = list(
         out = NULL
     ),
-    
+
     public = list(
         initialize = function(n) {
             private$out <- lapply(seq_len(n), function(x) WelfordAlgorithm$new())
@@ -232,7 +236,7 @@ WACombine <- R6::R6Class("WelfordAlgorithm_combine_foreach",
             return(lapply(private$out, function(x) x$finalize()))
         }
     ),
-    
+
     active = list()
 )
 

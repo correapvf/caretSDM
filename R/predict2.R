@@ -193,6 +193,7 @@ predict2.RasterStack <- function(object, model, doclamp = FALSE, ...) {
         func_back <- if (is.data.frame(preds[[1]])) back_to_raster2 else back_to_raster
         out <- lapply(preds, func_back, rasterStack = object, r_index = r_index)
         out <- raster::stack(out)
+        names(out) <- sapply(model, `[[`, "method")
 
     }
     return(out)
@@ -222,18 +223,19 @@ back_to_raster2 <- function(cv, rasterStack, r_index) {
 #' @export
 clamp_data <- function(object, dataset) {
 
-    if (inherits(object, "train"))
-        traindata <- object$trainingData
-    else {
+    if (inherits(object, "train")) {
+        traindata <- as.data.frame(object$trainingData)
+        coefs <- object$coefnames
+        dataset <- dataset[, coefs]
+    } else {
         traindata <- object
+        coefs <- names(dataset)
     }
 
-
-    if (!all(names(dataset) %in% colnames(traindata)))
+    if (!all(coefs %in% colnames(traindata)))
         stop("'dataset' layer/columns names should be equal to 'traindata' columns names.")
 
-    traindata <- as.data.frame(traindata)
-    traindata <- traindata[, names(dataset)]
+    traindata <- traindata[, coefs]
 
     for (i in seq_len(ncol(traindata))) {
         rang <- range(traindata[, i])
