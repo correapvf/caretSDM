@@ -44,7 +44,7 @@ confidence_map <- function(model, ...) UseMethod("confidence_map")
 #' @export
 confidence_map.train <- function(model, rasterStack, nrep = 10, doclamp = FALSE, progress = TRUE, ...) {
     out <- confidence_map.list(list(model), rasterStack, nrep, progress)
-    return(raster::raster(out))
+    return(out[[1]])
 }
 
 
@@ -61,7 +61,7 @@ confidence_map.list <- function(model, rasterStack, nrep = 10, doclamp = FALSE, 
 
 
     # convert raster to data.frame
-    r <- raster2data(rasterStack)
+    r <- raster2data(rasterStack, model[[1]])
     r_index <- as.numeric(row.names(r))
 
     results <- confidence_helper(model, r, nrep, model.type, doclamp, progress)
@@ -91,7 +91,7 @@ confidence_map.ensemble.train <- function(model, rasterStack, nrep = 10, doclamp
                                           progress = TRUE, return.all = FALSE, ...) {
 
     # convert raster to data.frame
-    r <- raster2data(rasterStack)
+    r <- raster2data(rasterStack, model)
     r_index <- as.numeric(row.names(r))
 
     model.type <- if (model$modelType == "Classification") "prob1" else "raw"

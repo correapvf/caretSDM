@@ -65,8 +65,7 @@ predict.maxent <- function(object, newdata = NULL, thrtype = NULL, clamp = NULL,
                                         doclamp, args0)))
 
         pred <- data.table::fread(outfile, sep =  "\n", header = FALSE, skip = 6)[[1L]]
-        pred <- as.numeric(strsplit(pred, " ")[[1]])
-
+        if (nrow(newdata) > 1) pred <- as.numeric(strsplit(pred, " ")[[1]])
         unlink(c(predfile, outfile))
     }
 

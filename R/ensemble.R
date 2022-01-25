@@ -127,7 +127,7 @@ createEnsemble <- function(model.list, ensemble_method = "weighted_mean", metric
         }
 
     }
-    
+
 
 
     if (calc.pred) {
@@ -208,10 +208,15 @@ createEnsemble <- function(model.list, ensemble_method = "weighted_mean", metric
         out$control$savePredictions <- "final"
 
     } else {
-        
+
         out$control$savePredictions <- FALSE
     }
 
+    # create results table
+    e <- evaluate.train(out, errorFunction = stats::sd)
+    out$results <- t(data.frame(c(0, e$eval$value, e$eval$error)))
+    row.names(out$results) <- 1
+    colnames(out$results) <- c("param", as.character(e$eval$metric), paste0(e$eval$metric, "SD"))
 
     # get terms if available
     if (inherits(model.list[[1]], "train.formula")) {

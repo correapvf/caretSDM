@@ -188,9 +188,18 @@ create_args <- function(model) {
 }
 
 
-raster2data <- function(raster) {
+raster2data <- function(raster, model) {
     r <- raster::as.data.frame(raster, na.rm = FALSE)
     r <- stats::na.omit(r)
     colnames(r) <- sub("_VALUE$", "", colnames(r))
+
+    # converto to factor if avaiable
+    varfactor <- names(model$xlevels)
+    if (length(varfactor) > 0) {
+        for (f in varfactor) {
+            r[, f] <- as.factor(r[, f])
+        }
+    }
+    
     return(r)
 }

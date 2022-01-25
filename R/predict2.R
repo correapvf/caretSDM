@@ -146,7 +146,7 @@ predict2.list <- function(object, ...) {
 #' @export
 predict2.RasterStack <- function(object, model, doclamp = FALSE, ...) {
     # convert raster to data.frame
-    r <- raster2data(object)
+    r <- raster2data(object, model)
     r_index <- as.numeric(row.names(r))
 
     is.train <- inherits(model, "train")
@@ -182,7 +182,6 @@ predict2.RasterStack <- function(object, model, doclamp = FALSE, ...) {
 
     }
 
-
     if (is.train) {
 
         func_back <- if (is.data.frame(preds)) back_to_raster2 else back_to_raster
@@ -193,7 +192,15 @@ predict2.RasterStack <- function(object, model, doclamp = FALSE, ...) {
         func_back <- if (is.data.frame(preds[[1]])) back_to_raster2 else back_to_raster
         out <- lapply(preds, func_back, rasterStack = object, r_index = r_index)
         out <- raster::stack(out)
-        names(out) <- sapply(model, `[[`, "method")
+
+        if (length(model) == raster::nlayers(out)) {
+            names(out) <- sapply(model, `[[`, "method")
+        } else { # type = "prob" or "both" or "both1"
+            nrep <- raster::nlayers(out) / length(model)
+            names1 <- rep(sapply(model, `[[`, "method"), each = nrep)
+            names2 <- sapply(strsplit(names(out), "\\."), `[[`, 1)
+            names(out) <- make.names(paste(names1, names2, sep = "_"), unique = TRUE)
+        }
 
     }
     return(out)
@@ -225,8 +232,8 @@ clamp_data <- function(object, dataset) {
 
     if (inherits(object, "train")) {
         traindata <- as.data.frame(object$trainingData)
-        coefs <- object$coefnames
-        dataset <- dataset[, coefs]
+        coefs <- getcoefs(object)
+        dataset <- if (is.data.frame(dataset)) dataset[, coefs] else dataset[[coefs]]
     } else {
         traindata <- object
         coefs <- names(dataset)
@@ -238,13 +245,15 @@ clamp_data <- function(object, dataset) {
     traindata <- traindata[, coefs]
 
     for (i in seq_len(ncol(traindata))) {
-        rang <- range(traindata[, i])
+        if (is.numeric(traindata[, i])) {
+            rang <- range(traindata[, i])
 
-        tmp <- dataset[[i]] < rang[1]
-        dataset[[i]][tmp] <- rang[1]
+            tmp <- dataset[[i]] < rang[1]
+            dataset[[i]][tmp] <- rang[1]
 
-        tmp <- dataset[[i]] > rang[2]
-        dataset[[i]][tmp] <- rang[2]
+            tmp <- dataset[[i]] > rang[2]
+            dataset[[i]][tmp] <- rang[2]
+        }
     }
 
     return(dataset)

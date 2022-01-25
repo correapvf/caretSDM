@@ -247,8 +247,8 @@ response_table <- function(model, fixedvarFunction = mean, n = 100, ...) {
     model$trainingData <- as.data.frame(model$trainingData)
 
     # calculate overall response
-    varnumeric <- coefs[!(coefs %in% names(model$xlevels))]
     varfactor <- names(model$xlevels)
+    varnumeric <- coefs[!(coefs %in% varfactor)]
     newdata <- model$trainingData[, coefs]
 
     # calculate data.frames with variable fixed
