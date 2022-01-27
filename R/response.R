@@ -37,7 +37,17 @@ response.train <- function(model, fixedvarFunction = mean, errorFunction = ci_95
 
 
 
-#' @rdname combine
+#' @export
+response.ensemble.train <- function(model, fixedvarFunction = mean, n = 100, progress = FALSE, ...) {
+
+    fixedDat <- response_table(model, fixedvarFunction, n)
+
+    out <- response_main(model, NULL, progress, fixedDat, ...)
+    return(out)
+}
+
+
+
 #' @export
 response.list <- function(model, ...) {
 
@@ -178,8 +188,7 @@ c_response.train <- function(x) {
 #' @export
 print.response.train <- function(x, ...) {
     cat("Object of type response.train\n")
-    methods <- unique(levels(x$num), levels(x$fact))
-    cat("Models avaiable:", methods, "\n")
+    cat("Models avaiable:", levels(x$num$method), "\n")
     cat("Coeficients avaiable:", x$coefs, "\n\n")
     if (nrow(x$num) > 0) print(x$num, nrows = 20)
     if (nrow(x$fact) > 0) print(x$fact, nrows = 20)
@@ -396,11 +405,19 @@ response_main <- function(model, errorFunction = ci_95, progress = FALSE, fixedD
 
         # only use the final model
         out <- response.helper(model, fixedDat, model.type)
+        if (nrow(out$num) > 0) {
+            out$num <- out$num[, .(method = factor(model$modelInfo$label),
+                                variable, predictors, response, error = 0)]
+        } else {
+            out$num <- data.table()
+        }
 
-        out$num <- out$num[, .(method = factor(model$modelInfo$label),
-                               variable, predictors, response, error = 0)]
-        out$fact <- out$fact[, .(method = factor(model$modelInfo$label),
-                                 variable, factors, response, error = 0)]
+        if (nrow(out$fact) > 0) {
+            out$fact <- out$fact[, .(method = factor(model$modelInfo$label),
+                                    variable, factors, response, error = 0)]
+        } else {
+            out$fact <- data.table()
+        }
 
         out$num_resample <- data.table()
         out$fact_resample <- data.table()
