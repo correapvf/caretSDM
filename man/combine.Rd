@@ -11,7 +11,6 @@
 \alias{confusionMatrix2.list}
 \alias{ROCcurve.list}
 \alias{c.ROCcurve}
-\alias{response.list}
 \alias{c.response.train}
 \alias{combine}
 \title{Combine objects}
@@ -33,8 +32,6 @@
 \method{ROCcurve}{list}(model, ...)
 
 \method{c}{ROCcurve}(...)
-
-\method{response}{list}(model, ...)
 
 \method{c}{response.train}(...)
 }

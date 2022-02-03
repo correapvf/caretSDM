@@ -70,14 +70,15 @@ varImp2.train <- function(model, nperm = 1, errorFunction = ci_95, ...) {
     }
 
 
-    scaled <- imp / max(imp) * 100
+    scaled <- max(imp) * 100
 
     out <- list()
     out$importance <- data.table(method = factor(model$modelInfo$label),
                          variable = factor(coefs),
                          importance = imp,
-                         scaled = scaled,
-                         error = errors)
+                         scaled = imp / scaled,
+                         error = errors,
+                         scaled_error = errors / scaled)
 
     out$resamples <- res
     out$nperm <- nperm
@@ -135,14 +136,19 @@ summary.varImp2 <- function(object, scale = FALSE, ...) {
 
     if (scale) {
         out[, c("importance", "error") := NULL]
+        if (diff(range(out$error)) == 0) {
+            out[, "scaled_error" := NULL]
+        } else {
+            colnames(out)[4] <- "error"
+        }
         setorderv(out, cols = "scaled", order = -1L)
-        out[, "variable" := factor(variable, levels = unique(variable))]
         colnames(out)[3] <- "importance"
     } else {
         if (diff(range(out$error)) == 0) out[, "error" := NULL]
-        out[, "scaled" := NULL]
-        out[, "variable" := factor(variable, levels = unique(variable))]
+        out[, c("scaled", "scaled_error") := NULL]
     }
+
+    out[, "variable" := factor(variable, levels = unique(variable))]
     setorder(out, method, variable)
     return(out)
 }
