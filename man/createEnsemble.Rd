@@ -48,7 +48,7 @@ The ensemble prediction is calculated based on the ensemble_method:
 \item \code{mean} - models mean prediction.
 \item \code{median} - models median prediction.
 \item \code{weighted_mean } - models weighted mean prediction. Weighs are based on the \code{metric},
-so models with higher metric have more weigh in the mean.
+so models with higher metric have more weight in the mean.
 \item \code{number_votes} - The number of predictions of the first class (considered positive or presence) is
 divided by the number of models.  When the prediction is close to 1, it means that all models
 agree to predict the first class. Only models of type "Classification" are supported.

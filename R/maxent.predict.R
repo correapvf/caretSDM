@@ -152,12 +152,12 @@ var_imp <- function(x, ...) UseMethod("var_imp")
 var_imp.maxent <- function(object, itype="both", ...) {
     index <- endsWith(object$results$variable, "contribution")
     if (itype == "contribution") {
-        out <- data.frame(contribution = object$results$value[index])
+        out <- data.frame(Overall = object$results$value[index])
     } else if (itype == "permutation") {
-        out <- data.frame(permutation.importance = object$results$value[endsWith(object$results$variable, "permutation importance")])
+        out <- data.frame(perm.imp = object$results$value[endsWith(object$results$variable, "permutation importance")])
     } else {
-        out <- data.frame(contribution = object$results$value[index],
-                          permutation.importance = object$results$value[endsWith(object$results$variable, "permutation importance")])
+        out <- data.frame(Overall = object$results$value[index],
+                          perm.imp = object$results$value[endsWith(object$results$variable, "permutation importance")])
     }
 
     varnames <- sapply(strsplit(object$results$variable[index], " "), `[`, 1)

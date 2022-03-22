@@ -11,7 +11,7 @@ globalVariables(c("ind", "o"))
 #' \item \code{mean} - models mean prediction.
 #' \item \code{median} - models median prediction.
 #' \item \code{weighted_mean } - models weighted mean prediction. Weighs are based on the \code{metric},
-#' so models with higher metric have more weigh in the mean.
+#' so models with higher metric have more weight in the mean.
 #' \item \code{number_votes} - The number of predictions of the first class (considered positive or presence) is
 #' divided by the number of models.  When the prediction is close to 1, it means that all models
 #' agree to predict the first class. Only models of type "Classification" are supported.
@@ -162,11 +162,13 @@ createEnsemble <- function(model.list, ensemble_method = "weighted_mean", metric
                     args$weights <- model.list[[i]]$trainingData$.weights[ind]
 
                     tmp.model <- invisible(do.call("train", args))
+                    if (!is.null(model.list[[i]]$thr)) tmp.model$thr <- model.list[[i]]$thr
 
                     predict2(tmp.model, out$trainingData[o, ], type = "both")
 
                 }
 
+                # update model$pred data.frame
                 results <- as.data.frame(rbindlist(results))
                 results2 <- data.frame(
                     obs = out$trainingData$.outcome,
@@ -176,6 +178,17 @@ createEnsemble <- function(model.list, ensemble_method = "weighted_mean", metric
                 )
 
                 model.list[[i]]$pred <- cbind(results, results2)
+
+                # update model$results data.frame - not sure if needed
+                # tmp <- data.table(model.list[[i]]$pred)
+                # tmpfunc <- function(x) as.data.table(as.list(
+                #     model.list[[i]]$control$summaryFunction(as.data.frame(x), model.list[[i]]$levels)
+                # ))
+                # tmp <- tmp[, tmpfunc(.SD), by = "Resample"]
+                # tmp1 <- tmp[, lapply(.SD, mean), .SDcols = -"Resample"]
+                # tmp2 <- tmp[, lapply(.SD, stats::sd), .SDcols = -"Resample"]
+                # colnames(tmp2) <- paste0(colnames(tmp2), "SD")
+                # model.list[[i]]$results <- as.data.frame(cbind(model.list[[i]]$bestTune, tmp1, tmp2))
 
             }
         }
@@ -241,6 +254,10 @@ predict.ensemble.train <- function(object, newdata = NULL, type = "raw", ...) {
     if (is.null(newdata)) newdata <- object$trainingData
 
     preds <- lapply(object$model.list, predict2, newdata = newdata, type = object$type, ...)
+
+    # scale
+    if (object$type == "prob1") preds <- lapply(preds, range01)
+
     preds <- apply(data.frame(preds), 1, object$algo, w = object$w)
 
     if (object$modelType == "Classification") {
@@ -252,4 +269,10 @@ predict.ensemble.train <- function(object, newdata = NULL, type = "raw", ...) {
         }
     }
     return(preds)
+}
+
+
+range01 <- function(x) {
+    rg <- range(x)
+    return((x - rg[1]) / (rg[2] - rg[1]))
 }

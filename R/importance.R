@@ -70,7 +70,7 @@ varImp2.train <- function(model, nperm = 1, errorFunction = ci_95, ...) {
     }
 
 
-    scaled <- max(imp) * 100
+    scaled <- max(imp) # * 100
 
     out <- list()
     out$importance <- data.table(method = factor(model$modelInfo$label),
