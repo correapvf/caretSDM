@@ -33,7 +33,7 @@ response(model, ...)
 
 \item{fixedvarFunction}{A function used to fix as constant the other variables when the predicting responses.}
 
-\item{errorFunction}{A function used to calculate error across resamples. Default is 95% confidence interval.
+\item{errorFunction}{A function used to calculate error across resamples. Default is 95\% confidence interval.
 If \code{NULL}, responses are calculated from the final model only.}
 
 \item{n}{Number of responses to get for each variable, as in seq(min(variable), max(variable), length.out=n).}

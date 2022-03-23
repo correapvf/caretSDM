@@ -136,7 +136,7 @@ summary.varImp2 <- function(object, scale = FALSE, ...) {
 
     if (scale) {
         out[, c("importance", "error") := NULL]
-        if (diff(range(out$error)) == 0) {
+        if (diff(range(out$scaled_error)) == 0) {
             out[, "scaled_error" := NULL]
         } else {
             colnames(out)[4] <- "error"
@@ -165,7 +165,7 @@ c.varImp2 <- function(...) {
 c_varImp2 <- function(x) {
     m <- list()
     m$importance <- rbindlist(lapply(x, `[[`, "importance"))
-    m$resamples <- rbindlist(lapply(x, `[[`, "resamples"))
+    m$resamples <- rbindlist(lapply(x, `[[`, "resamples"), fill = TRUE)
     m$nperm <- unlist(lapply(x, `[[`, "nperm"))
     class(m) <- "varImp2"
     return(m)

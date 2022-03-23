@@ -96,13 +96,9 @@ check_list <- function(model.list) {
         stop("All models should be of the same type (classification or regression).")
 
     #  Check if all models have the same coefficients
-    coefs <- sapply(model.list, `[[`, "coefnames")
-    if (is.matrix(coefs)) {
-        coefs_check <- all(apply(coefs, 1, function(x) all(x == x[1])))
-    } else {
-        coefs_check <- FALSE
-    }
-    if (!coefs_check) stop("All models should use the same coeficients.")
+    coefs <- lapply(model.list, `[[`, "coefnames")
+    coefs_check <- all(sapply(coefs, function(x, y) all(x %in% y), y = coefs[[1]]))
+    if (!coefs_check) stop("The first model should have all coeficients used in following models")
 
     return(invisible(NULL))
 }
@@ -200,6 +196,6 @@ raster2data <- function(raster, model) {
             r[, f] <- as.factor(r[, f])
         }
     }
-    
+
     return(r)
 }

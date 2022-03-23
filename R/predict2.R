@@ -146,20 +146,14 @@ predict2.list <- function(object, ...) {
 #' @export
 predict2.RasterStack <- function(object, model, doclamp = FALSE, ...) {
     # convert raster to data.frame
-    r <- raster2data(object, model)
-    r_index <- as.numeric(row.names(r))
 
     is.train <- inherits(model, "train")
-    if (is.train) {
-        allowParallel <- model$control$allowParallel
-        if (doclamp) r <- clamp_data(model, r)
-    } else {
-        allowParallel <- model[[1]]$control$allowParallel
-        if (doclamp) {
-            message("Only training data of the first model will be used to clamp rasterStack")
-            r <- clamp_data(model[[1]], r)
-        }
-    }
+    modeltmp <- if (is.train) model else model[[1]]
+
+    allowParallel <- modeltmp$control$allowParallel
+    r <- raster2data(object, modeltmp)
+    r_index <- as.numeric(row.names(r))
+    if (doclamp) r <- clamp_data(modeltmp, r)
 
     if (allowParallel && getDoParWorkers() > 1) {
 

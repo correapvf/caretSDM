@@ -12,7 +12,7 @@ response <- function(model, ...) UseMethod("response")
 #' Here we use the same process as described in \code{biomod2::response.plot2}.
 #' @param model A model returned by \code{\link[caret]{train}}.
 #' @param fixedvarFunction A function used to fix as constant the other variables when the predicting responses.
-#' @param errorFunction A function used to calculate error across resamples. Default is 95% confidence interval.
+#' @param errorFunction A function used to calculate error across resamples. Default is 95\% confidence interval.
 #' If \code{NULL}, responses are calculated from the final model only.
 #' @param n Number of responses to get for each variable, as in seq(min(variable), max(variable), length.out=n).
 #' @param progress logical. Show progress bar?
@@ -199,7 +199,7 @@ print.response.train <- function(x, ...) {
 ###################
 # helper function
 
-response.helper <- function(model, fixedDat, model.type) {
+response.helper <- function(model, fixedDat, coefs, model.type) {
 
     varnumeric <- fixedDat[[1]]
     varfactor <- fixedDat[[2]]
@@ -214,12 +214,13 @@ response.helper <- function(model, fixedDat, model.type) {
 
     # predict and save output
     # for numeric
-    if (length(varnumeric) > 0) {
+    index <- variablen %in% coefs
+    if (length(varnumeric) > 0 && sum(index) > 0) {
 
-        pred <- predict2(model, fixedDatan, type = model.type)
+        pred <- predict2(model, fixedDatan[index, ], type = model.type)
 
-        out$num <- data.table(variable = factor(variablen, levels = varnumeric),
-                              predictors = response_numeric,
+        out$num <- data.table(variable = factor(variablen[index], levels = varnumeric),
+                              predictors = response_numeric[index],
                               response = pred)
 
     } else {
@@ -229,12 +230,13 @@ response.helper <- function(model, fixedDat, model.type) {
     }
 
     # for factors
-    if (length(varfactor) > 0) {
+    index <- variablef %in% coefs
+    if (length(varfactor) > 0 && sum(index) > 0) {
 
-        pred <- predict2(model, fixedDataf, type = model.type)
+        pred <- predict2(model, fixedDataf[index, ], type = model.type)
 
-        out$fact <- data.table(variable = factor(variablef, levels = varfactor),
-                               factors = tmp2_u,
+        out$fact <- data.table(variable = factor(variablef[index], levels = varfactor),
+                               factors = tmp2_u[index],
                                response = pred)
     } else {
         out$fact <- data.table(variable = factor(),
@@ -285,9 +287,12 @@ response_table <- function(model, fixedvarFunction = mean, n = 100, ...) {
             fixedDatan[index, var] <- response_numeric[index]
         }
 
-        if (length(varfactor) > 0)
-            fixedDatan[, varfactor] <- mapply(x = fixedDatan[, varfactor],
-                                              levels = model$xlevels, factor, SIMPLIFY = FALSE)
+        if (length(varfactor) > 0) {
+            for (var in varfactor) {
+                fixedDatan[, var] <- factor(fixedDatan[, var], levels = model$xlevels[[var]])
+            }
+        }
+
     } else {
         fixedDatan <- NULL
         response_numeric <- NULL
@@ -306,9 +311,9 @@ response_table <- function(model, fixedvarFunction = mean, n = 100, ...) {
         for (var in varfactor) {
             index <- variablef == var
             fixedDataf[index, var] <- as.character(tmp2_u[index])
+            fixedDataf[, var] <- factor(fixedDataf[, var], levels = model$xlevels[[var]])
         }
 
-        fixedDataf[, varfactor] <- mapply(x = fixedDataf[, varfactor], levels = model$xlevels, factor, SIMPLIFY = FALSE)
     } else {
         fixedDataf <- NULL
         variablef <- NULL
@@ -324,8 +329,7 @@ response_table <- function(model, fixedvarFunction = mean, n = 100, ...) {
 
 response_main <- function(model, errorFunction = ci_95, progress = FALSE, fixedDat, ...) {
 
-    quantiles <- fixedDat[[5]]
-    coefs <- fixedDat[[6]]
+    coefs <- getcoefs(model) #fixedDat[[6]]
 
     coefs_obs <- c(coefs, ".outcome")
     model.type <- if (model$modelType == "Classification") "prob1" else "raw"
@@ -376,7 +380,7 @@ response_main <- function(model, errorFunction = ci_95, progress = FALSE, fixedD
             }
 
             # create response
-            response.helper(tmp.model, fixedDat, model.type)
+            response.helper(tmp.model, fixedDat, coefs, model.type)
         }
 
         if (progress) {
@@ -428,7 +432,7 @@ response_main <- function(model, errorFunction = ci_95, progress = FALSE, fixedD
     out$xlevels <- model$xlevels
     out$thr <- model$thr
     out$modelType <- model$modelType
-    out$quantiles <- quantiles
+    out$quantiles <- fixedDat[[5]]
     class(out) <- "response.train"
     return(out)
 }
