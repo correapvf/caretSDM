@@ -26,7 +26,7 @@ globalVariables(c("ind", "o"))
 #' to "final"; else, savePredictions is set to "FALSE".
 #' @return An S3 object of classes "ensemble.train" that also inherits "train".
 #' This object can be used in other functions, like \code{evaluate} or \code{confidence_map}.
-#' @seealso \code{\link{confidence_map}}.
+#' @seealso \code{\link{confidence_map}}
 #' @export
 createEnsemble <- function(model.list, ensemble_method = "weighted_mean", metric = NULL, calc.pred = FALSE) {
 
@@ -246,17 +246,18 @@ createEnsemble <- function(model.list, ensemble_method = "weighted_mean", metric
 #' @param object A object returned by \code{createEnsemble}.
 #' @param newdata A data.frame containing data to predict.
 #' @param type One of "raw" or "prob".
+#' @param scale logical. Scale predictions of each model between 0 and 1 before ensemble?
 #' @param ... Further arguments passed to \code{predict}.
 #' @rdname createEnsemble
 #' @export
-predict.ensemble.train <- function(object, newdata = NULL, type = "raw", ...) {
+predict.ensemble.train <- function(object, newdata = NULL, scale = TRUE, type = "raw", ...) {
 
     if (is.null(newdata)) newdata <- object$trainingData
 
     preds <- lapply(object$model.list, predict2, newdata = newdata, type = object$type, ...)
 
     # scale
-    if (object$type == "prob1") preds <- lapply(preds, range01)
+    if (scale && object$type == "prob1") preds <- lapply(preds, range01)
 
     preds <- apply(data.frame(preds), 1, object$algo, w = object$w)
 

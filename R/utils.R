@@ -72,8 +72,15 @@ createIndex <- function(y, method, number, repeats, p) {
     ))
 }
 
-
-
+#' Functions to calculate confidence intervals
+#'
+#' \code{ci_95} calculates 95\% confidence intervals and \code{se} calculates stardard error.
+#' @param x Numeric vector to calculate confidence intervals
+#' @param alpha Probability used for the Student t Distribution
+#' (\code{alpha = 0.05} is equivilant 95\% CI)
+#' @param na.rm a logical value indicating whether NA values should be stripped.
+#' @rdname CI
+#' @export
 ci_95 <- function(x, alpha = 0.05, na.rm = FALSE) {
     if (na.rm) x <- x[!is.na(x)]
     n <- length(x)
@@ -81,6 +88,12 @@ ci_95 <- function(x, alpha = 0.05, na.rm = FALSE) {
     return(out)
 }
 
+#' @rdname CI
+#' @export
+se <- function(x, na.rm = FALSE) {
+    if (na.rm) x <- x[!is.na(x)]
+    return(stats::sd(x) / sqrt(length(x)))
+}
 
 
 # check models in list, and return a error if one of those checks is false

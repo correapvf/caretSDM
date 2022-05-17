@@ -12,7 +12,7 @@ createEnsemble(
   calc.pred = FALSE
 )
 
-\method{predict}{ensemble.train}(object, newdata = NULL, type = "raw", ...)
+\method{predict}{ensemble.train}(object, newdata = NULL, scale = TRUE, type = "raw", ...)
 }
 \arguments{
 \item{model.list}{A list of models returned by \code{\link[caret]{train}}.}
@@ -29,6 +29,8 @@ to "final"; else, savePredictions is set to "FALSE".}
 \item{object}{A object returned by \code{createEnsemble}.}
 
 \item{newdata}{A data.frame containing data to predict.}
+
+\item{scale}{logical. Scale predictions of each model between 0 and 1 before ensemble?}
 
 \item{type}{One of "raw" or "prob".}
 
@@ -56,5 +58,5 @@ agree to predict the first class. Only models of type "Classification" are suppo
 For classification, the probability of predictions is used to create the ensemble.
 }
 \seealso{
-\code{\link{confidence_map}}.
+\code{\link{confidence_map}}
 }

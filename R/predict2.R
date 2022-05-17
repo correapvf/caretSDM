@@ -77,7 +77,7 @@ predict2 <- function(object, ...) UseMethod("predict2")
 #' @param ... Further arguments passed to \code{predict} or method 'train'.
 #' @return A vector or data.frame with predictions or probabilities, based on the argument \code{type}. Check details.
 #' If \code{model} is a list of models, than a list of predictions is returned.
-#' @seealso \code{\link{setThreshold}} c\code{\link{clamp_data}}
+#' @seealso \code{\link{setThreshold}} \code{\link{clamp_data}}
 #' @rdname predict2
 #' @export
 predict2.train <- function(object, newdata = NULL, type = "raw", doclamp = FALSE, ...) {

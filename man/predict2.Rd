@@ -46,5 +46,5 @@ to be presence). \code{type = "both1"} will return class prediction and the firs
 The method for RasterStack is a simpler version of \code{raster::predict}, but it may be faster sometimes.
 }
 \seealso{
-\code{\link{setThreshold}} c\code{\link{clamp_data}}
+\code{\link{setThreshold}} \code{\link{clamp_data}}
 }
